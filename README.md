@@ -10,6 +10,8 @@ tmwa-vagrant is a Vagrantfile and provisioning script to get you started with de
 5. Have fun!
 
 ##Usage
+To get shell access to the machine, run `vagrant ssh`.
+
 Use `vagrant suspend` to pause the machine. The contents of the VM's ram will be written to your hard drive and it won't be using and CPU or RAM while it's paused. To run it again from its paused state, use `vagrant resume`. To turn the machine off, use `vagrant halt`. To run it again, use `vagrant up`.
 
 To destroy the machine completely (you'll still keep the Vagrantfile and any changes you've made to tmwa and/or tmwa-server data) run `vagrant destroy`.
