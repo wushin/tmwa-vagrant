@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Update all packages
-echo "Updating the Virtual Machine..."
+echo "Updating the Virtual Machine (if this is the first time you're running this machine, it can take some time)..."
 sudo apt-get -y update &> /dev/null
 sudo apt-get -y upgrade &> /dev/null
 
@@ -35,6 +35,8 @@ if [ -d "/home/vagrant/tmwAthena/tmwa" ]; then
   TMWA_UPDT=$(git pull)
   if [ "$TMWA_UPDT" == "Already up-to-date." ]; then
     echo "themanaworld/tmwa clone is already up to date."
+    # Make install just in case the clone is from a previous VM
+    sudo make install &> /dev/null
   else
     echo "themanaworld/tmwa clone updated."
     echo "Rebuilding tmwa (please be patient, this can take some time)..."
@@ -61,10 +63,10 @@ if [ -d "/home/vagrant/tmwAthena/tmwa-server-data" ]; then
   cd /home/vagrant/tmwAthena/tmwa-server-data
   TMWASD_UPDT=$(git pull)
   if [ "$TMWASD_UPDT" == "Already up-to-date." ]; then
-    echo "themanaworld/tmwa-server-data clone is already up to date."
+    echo "themanaworld/tmwa-server-data clone is already up to date."     
   else
-    echo "themanaworld/tmwa-server-data clone updated."
-  fi
+    echo "themanaworld/tmwa-server-data clone updated."     
+  fi 
 else
   echo "Cloning themanaworld/tmwa-server-data..."
   cd /home/vagrant/tmwAthena
@@ -86,10 +88,35 @@ fi
 cd /home/vagrant/tmwAthena/tmwa-server-data/
 echo "Starting the server..."
 ./char-server& ./login-server& ./map-server& 
-sleep 20
-echo "Server is now running. You can reach it by adding a new server to your client:"
-echo "Name: Local Server"
-echo "Address: localhost"
-echo "Port: 6901"
-echo "Server type: TmwAthena"
-echo "Have fun!"
+sleep 10
+
+# Check for admin account and create it if it doesn't exist
+cd /home/vagrant/tmwAthena/tmwa-server-data/login/save
+CHK_ACC=$(cat account.txt | grep admin)
+if [ "$CHK_ACC" == "" ]; then
+  echo "GM account can't be found, creating..."
+  cd /home/vagrant/tmwAthena/tmwa-server-data/login
+  ladmin <<END
+add admin M vagrant
+gm admin 99
+exit
+exit
+END
+else
+  echo "GM account is already set up."
+fi
+
+# Output info about the server
+echo "######################################################################################"
+echo "#                                                                                    #"
+echo "#   Server is now running. You can reach it by adding a new server to your client:   #"
+echo "#   Name: Local Server                                                               #"
+echo "#   Address: localhost                                                               #"
+echo "#   Port: 6901                                                                       #"
+echo "#   Server type: TmwAthena                                                           #"
+echo "#   A GM level 99 account has been created for you with the following credentials:   #"
+echo "#   Username: admin                                                                  #"
+echo "#   Password: vagrant                                                                #"
+echo "#   Have fun!                                                                        #"
+echo "#                                                                                    #"
+echo "######################################################################################"
