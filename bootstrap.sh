@@ -83,6 +83,12 @@ else
   git checkout master &> /dev/null
   cd music &> /dev/null
   git checkout master &> /dev/null
+  # Set up magic
+  echo "Setting up magic..."
+  cd /home/vagrant/tmwAthena/tmwa-server-data/world/map/conf
+  wget -O spells-build https://gist.github.com/DinoPaskvan/6283572/raw/c628b18c36b5dee07d304372d2aa57e9d355b4af/spells-build
+  cp magic.conf.template magic.conf
+  ./build-magic.sh
 fi
 
 # Run the tmwa server

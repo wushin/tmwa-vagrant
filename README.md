@@ -10,9 +10,12 @@ You do not need a pre-existing VM image, everything is downloaded automatically.
 ##Installation
 1. [Install Vagrant](http://docs.vagrantup.com/v2/installation/index.html)
 2. [Install VirtualBox](https://www.virtualbox.org/wiki/Downloads)
-3. Clone this repository
-4. Navigate into the repository you've cloned and run `vagrant up`
-5. Have fun!
+3. **Optional step for Windows users:** Install the [Windows GitHub app](http://windows.github.com/)
+4. Clone this repository
+5. Navigate into the repository you've cloned and run `vagrant up`
+6. Have fun!
+
+**Note:** Installing the Windows GitHub app provides you with a Git GUI and Windows PowerShell, as well as SSH, needed for Vagrant to SSH into the VM.
 
 ##Usage
 To get shell access to the machine, run `vagrant ssh`.
@@ -22,6 +25,5 @@ Use `vagrant suspend` to pause the machine. The contents of the VM's ram will be
 To destroy the machine completely (you'll still keep the Vagrantfile and any changes you've made to tmwa and/or tmwa-server data) run `vagrant destroy`.
 
 ##To do
-* Add magic configuration to the provisioning script
-* Fix the output of the provisioning script
-* Make style improvments to the code of the provisioning script
+* Fix the output of the provisioning script (formatting, more information)
+* General improvments to the script
