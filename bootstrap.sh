@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
 # Update all packages
-echo "Updating the Virtual Machine (if this is the first time you're running this machine, it can take some time)..."
+echo "Updating the Virtual Machine (if this is the first time you're running this"
+echo "machine, it can take some time)..."
 sudo apt-get -y update &> /dev/null
 sudo apt-get -y upgrade &> /dev/null
 
@@ -107,16 +108,18 @@ else
 fi
 
 # Output info about the server
-echo "######################################################################################"
-echo "#                                                                                    #"
-echo "#   Server is now running. You can reach it by adding a new server to your client:   #"
-echo "#   Name: Local Server                                                               #"
-echo "#   Address: localhost                                                               #"
-echo "#   Port: 6901                                                                       #"
-echo "#   Server type: TmwAthena                                                           #"
-echo "#   A GM level 99 account has been created for you with the following credentials:   #"
-echo "#   Username: admin                                                                  #"
-echo "#   Password: vagrant                                                                #"
-echo "#   Have fun!                                                                        #"
-echo "#                                                                                    #"
-echo "######################################################################################"
+echo "##############################################################################"
+echo "#                                                                            #"
+echo "#   Server is now running. You can reach it by adding a new server to your   #"
+echo "#   client:                                                                  #"
+echo "#   Name: Local Server                                                       #"
+echo "#   Address: localhost                                                       #"
+echo "#   Port: 6901                                                               #"
+echo "#   Server type: TmwAthena                                                   #"
+echo "#   A GM level 99 account has been created for you with the following        #"
+echo "#   credentials:                                                             #"
+echo "#   Username: admin                                                          #"
+echo "#   Password: vagrant                                                        #"
+echo "#   Have fun!                                                                #"
+echo "#                                                                            #"
+echo "##############################################################################"
