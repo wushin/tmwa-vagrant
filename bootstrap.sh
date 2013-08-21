@@ -50,13 +50,13 @@ if [ -d "/home/vagrant/tmwAthena/tmwa" ]; then
 else
   echo "Cloning themanaworld/tmwa..."
   cd /home/vagrant/tmwAthena
-  git clone --recursive git://github.com/themanaworld/tmwa.git &> /dev/null
+  git clone --recursive git://github.com/themanaworld/tmwa.git &> /dev/null || echo "[Error] Cloning tmwa failed."
   cd tmwa
-  git submodule update --init &> /dev/null
+  git submodule update --init &> /dev/null || echo "[Error] Updating submodules for tmwa failed."
   echo "Building tmwa (please be patient, this can take some time)..."
-  ./configure &> /dev/null
-  make &> /dev/null
-  sudo make install &> /dev/null
+  ./configure &> /dev/null || echo "[Error] Configure failed for tmwa."
+  make &> /dev/null || echo "[Error] Building tmwa failed."
+  sudo make install &> /dev/null || echo "[Error] Make install for tmwa failed."
   git config --global url.git@github.com:.pushInsteadOf git://github.com
 fi
 if [ -d "/home/vagrant/tmwAthena/tmwa-server-data" ]; then
@@ -71,7 +71,7 @@ if [ -d "/home/vagrant/tmwAthena/tmwa-server-data" ]; then
 else
   echo "Cloning themanaworld/tmwa-server-data..."
   cd /home/vagrant/tmwAthena
-  git clone --recursive git://github.com/themanaworld/tmwa-server-data.git &> /dev/null
+  git clone --recursive git://github.com/themanaworld/tmwa-server-data.git &> /dev/null || echo "[Error] Cloning tmwa-server-data failed."
   cd tmwa-server-data
   echo "Setting up update hooks..."
   ln -s ../../git/hooks/post-merge .git/hooks/ &> /dev/null
@@ -86,7 +86,7 @@ else
   # Set up magic
   echo "Setting up magic..."
   cd /home/vagrant/tmwAthena/tmwa-server-data/world/map/conf
-  wget -O spells-build https://gist.github.com/DinoPaskvan/6283572/raw/c628b18c36b5dee07d304372d2aa57e9d355b4af/spells-build
+  wget -O spells-build https://gist.github.com/DinoPaskvan/6283572/raw/c628b18c36b5dee07d304372d2aa57e9d355b4af/spells-build &> /dev/null
   chmod 777 spells-build
   cp magic.conf.template magic.conf
   ./build-magic.sh
