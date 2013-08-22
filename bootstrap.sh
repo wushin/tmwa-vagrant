@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 # Update all packages
+su vagrant
 echo "Updating the Virtual Machine (if this is the first time you're running this"
 echo "machine, it can take some time)..."
 sudo apt-get -y update &> /dev/null
