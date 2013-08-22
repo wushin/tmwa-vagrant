@@ -54,17 +54,15 @@ else
   echo "Cloning themanaworld/tmwa..."
   cd /home/vagrant/tmwAthena
   git clone --recursive git://github.com/themanaworld/tmwa.git &> /dev/null || echo "[Error] Cloning tmwa failed."
-  cd tmwa
+  cd /home/vagrant/tmwAthena/tmwa/deps/attoconf
+  sudo ./setup.py install &> /dev/null
+  cd /home/vagrant/tmwAthena/tmwa
   echo "Building tmwa (please be patient, this can take some time)..."
   ./configure &> /dev/null || echo "[Error] Configure failed for tmwa."
   make &> /dev/null || echo "[Error] Building tmwa failed."
   sudo make install &> /dev/null || echo "[Error] Make install for tmwa failed."
   git config --global url.git@github.com:.pushInsteadOf git://github.com
 fi
-(
-  cd /home/vagrant/tmwAthena/tmwa/deps/attoconf
-  sudo ./setup.py install
-)
 if [ -d "/home/vagrant/tmwAthena/tmwa-server-data" ]; then
   echo "Checking for updates for the themanaworld/tmwa-server-data clone..."
   cd /home/vagrant/tmwAthena/tmwa-server-data
