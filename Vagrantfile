@@ -27,7 +27,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # Provision the VM
   $script = <<SCRIPT
 chmod u+x /vagrant/bootstrap.sh
-sudo -u vagrant /vagrant/bootstrap.sh
+su vagrant -c /vagrant/bootstrap.sh
 SCRIPT
   config.vm.provision :shell, :inline => $script
 end
