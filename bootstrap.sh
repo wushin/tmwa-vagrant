@@ -33,6 +33,8 @@ fi
 if [ -d "/home/vagrant/tmwAthena/tmwa" ]; then
   echo "Checking for updates for the themanaworld/tmwa clone..."
   cd /home/vagrant/tmwAthena/tmwa
+  echo "Switching to branch master to preserve local changes..."
+  git checkout master &> /dev/null || echo "[Error] Failed to switch branches."
   TMWA_UPDT=$(git pull)
   if [ "$TMWA_UPDT" == "Already up-to-date." ]; then
     echo "themanaworld/tmwa clone is already up to date."
@@ -62,6 +64,8 @@ fi
 if [ -d "/home/vagrant/tmwAthena/tmwa-server-data" ]; then
   echo "Checking for updates for the themanaworld/tmwa-server-data clone..."
   cd /home/vagrant/tmwAthena/tmwa-server-data
+  echo "Switching to branch master to preserve local changes..."
+  git checkout master &> /dev/null || echo "[Error] Failed to switch branches."
   TMWASD_UPDT=$(git pull)
   if [ "$TMWASD_UPDT" == "Already up-to-date." ]; then
     echo "themanaworld/tmwa-server-data clone is already up to date."     
@@ -96,7 +100,7 @@ fi
 cd /home/vagrant/tmwAthena/tmwa-server-data/
 echo "Starting the server..."
 ./char-server& ./login-server& ./map-server& 
-sleep 10
+sleep 15
 
 # Check for admin account and create it if it doesn't exist
 cd /home/vagrant/tmwAthena/tmwa-server-data/login/save

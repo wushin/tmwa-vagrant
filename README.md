@@ -17,6 +17,9 @@ You do not need a pre-existing VM image, everything is downloaded automatically.
 
 **Note:** Installing the Windows GitHub app provides you with a Git GUI and Windows PowerShell, as well as SSH, needed for Vagrant to SSH into the VM.
 
+##Warning
+Whenever you run `vagrant up`, the VM updates the local repositories (it does a `git pull`), so that you have the latest version of *tmwa* and *tmwa-server-data*. If you are making any local changes, testing content, or anything like that, it's **recommended** that you do it on a different branch. The provisioning script will now always checkout the master branch before updating, leaving the other branches you might've created untouched.
+
 ##Usage
 To get shell access to the machine, run `vagrant ssh`.
 
