@@ -68,10 +68,10 @@ if [ -d "/home/vagrant/tmwAthena/tmwa-server-data" ]; then
   git checkout master &> /dev/null || echo "[Error] Failed to switch branches."
   TMWASD_UPDT=$(git pull)
   if [ "$TMWASD_UPDT" == "Already up-to-date." ]; then
-    echo "themanaworld/tmwa-server-data clone is already up to date."     
+    echo "themanaworld/tmwa-server-data clone is already up to date."
   else
-    echo "themanaworld/tmwa-server-data clone updated."     
-  fi 
+    echo "themanaworld/tmwa-server-data clone updated."
+  fi
 else
   echo "Cloning themanaworld/tmwa-server-data..."
   cd /home/vagrant/tmwAthena
@@ -99,7 +99,7 @@ fi
 # Run the tmwa server
 cd /home/vagrant/tmwAthena/tmwa-server-data/
 echo "Starting the server..."
-./char-server& ./login-server& ./map-server& 
+./char-server& ./login-server& ./map-server&
 sleep 15
 
 # Check for admin account and create it if it doesn't exist
