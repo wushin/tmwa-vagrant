@@ -72,6 +72,12 @@ if [ -d "/home/vagrant/tmwAthena/tmwa-server-data" ]; then
   if [ "$TMWASD_UPDT" == "Already up-to-date." ]; then
     echo "themanaworld/tmwa-server-data clone is already up to date."
   else
+    echo "Updating magic..."
+    cd /home/vagrant/tmwAthena/tmwa-server-data/world/map/conf
+    wget -N -O spells-build https://gist.github.com/DinoPaskvan/6283572/raw/56b607a04990f396ad9a1c9af5a72663bc62cedf/spells-build &> /dev/null
+    chmod 777 spells-build
+    cp magic.conf.template magic.conf
+    ./build-magic.sh
     echo "themanaworld/tmwa-server-data clone updated."
   fi
 else
@@ -92,7 +98,7 @@ else
   # Set up magic
   echo "Setting up magic..."
   cd /home/vagrant/tmwAthena/tmwa-server-data/world/map/conf
-  wget -O spells-build https://gist.github.com/DinoPaskvan/6283572/raw/c628b18c36b5dee07d304372d2aa57e9d355b4af/spells-build &> /dev/null
+  wget -O spells-build https://gist.github.com/DinoPaskvan/6283572/raw/56b607a04990f396ad9a1c9af5a72663bc62cedf/spells-build &> /dev/null
   chmod 777 spells-build
   cp magic.conf.template magic.conf
   ./build-magic.sh
