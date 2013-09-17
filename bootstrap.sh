@@ -98,7 +98,7 @@ else
   # Set up magic
   echo "Setting up magic..."
   cd /home/vagrant/tmwAthena/tmwa-server-data/world/map/conf
-  wget -O spells-build https://gist.github.com/DinoPaskvan/6283572/raw/56b607a04990f396ad9a1c9af5a72663bc62cedf/spells-build &> /dev/null
+  wget -O spells-build https://gist.github.com/DinoPaskvan/6283572/raw/ae439049895f89925550127e9d22b80761cd2d6b/spells-build &> /dev/null
   chmod 777 spells-build
   cp magic.conf.template magic.conf
   ./build-magic.sh
