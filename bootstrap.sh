@@ -107,7 +107,7 @@ fi
 # Run the tmwa server
 cd /home/vagrant/tmwAthena/tmwa-server-data/
 echo "Starting the server..."
-./char-server& ./login-server& ./map-server&
+./run-all &
 sleep 15
 
 # Check for admin account and create it if it doesn't exist
