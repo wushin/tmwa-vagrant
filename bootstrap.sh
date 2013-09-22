@@ -116,7 +116,7 @@ CHK_ACC=$(cat account.txt | grep admin)
 if [ "$CHK_ACC" == "" ]; then
   echo "GM account can't be found, creating..."
   cd /home/vagrant/tmwAthena/tmwa-server-data/login
-  ladmin <<END
+  tmwa-admin <<END
 add admin M vagrant
 gm admin 99
 exit
