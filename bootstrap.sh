@@ -8,9 +8,9 @@ sudo apt-get -y update &> /dev/null
 sudo apt-get -y upgrade &> /dev/null
 
 # Install dependancies necessary for compiling tmwa
-echo "Installing tmwa dependancies:"
+echo "Installing tmwa dependancies and tools:"
 
-DEPS="build-essential flex bison git"
+DEPS="build-essential flex bison git curl"
 
 for pkg in $DEPS; do
   PKG_OK=$(dpkg-query -W --showformat='${Status}\n' $pkg|grep "install ok installed")
@@ -74,7 +74,7 @@ if [ -d "/home/vagrant/tmwAthena/tmwa-server-data" ]; then
   else
     echo "Updating magic..."
     cd /home/vagrant/tmwAthena/tmwa-server-data/world/map/conf
-    wget -N -O spells-build https://gist.github.com/DinoPaskvan/6283572/raw/56b607a04990f396ad9a1c9af5a72663bc62cedf/spells-build &> /dev/null
+    curl https://gist.github.com/DinoPaskvan/6283572/raw/ae439049895f89925550127e9d22b80761cd2d6b/spells-build > spells-build &> /dev/null
     chmod 777 spells-build
     cp magic.conf.template magic.conf
     ./build-magic.sh
@@ -98,7 +98,7 @@ else
   # Set up magic
   echo "Setting up magic..."
   cd /home/vagrant/tmwAthena/tmwa-server-data/world/map/conf
-  wget -O spells-build https://gist.github.com/DinoPaskvan/6283572/raw/ae439049895f89925550127e9d22b80761cd2d6b/spells-build &> /dev/null
+  curl https://gist.github.com/DinoPaskvan/6283572/raw/ae439049895f89925550127e9d22b80761cd2d6b/spells-build > spells-build &> /dev/null
   chmod 777 spells-build
   cp magic.conf.template magic.conf
   ./build-magic.sh
