@@ -1,26 +1,10 @@
 #!/usr/bin/env bash
 
 # Update all packages
-su vagrant
 echo "Updating the Virtual Machine (if this is the first time you're running this"
 echo "machine, it can take some time)..."
 sudo apt-get -y update &> /dev/null
-sudo apt-get -y upgrade &> /dev/null
-
-# Install dependancies necessary for compiling tmwa
-echo "Installing tmwa dependancies and tools:"
-
-DEPS="build-essential flex bison git curl"
-
-for pkg in $DEPS; do
-  PKG_OK=$(dpkg-query -W --showformat='${Status}\n' $pkg|grep "install ok installed")
-  if [ "" == "$PKG_OK" ]; then
-    echo Installing $pkg...
-    sudo apt-get --force-yes --yes install $pkg &> /dev/null
-  else
-    echo $pkg is already installed. Skipping installation.
-  fi
-done
+sudo apt-get -y dist-upgrade &> /dev/null
 
 # Set up sharing the folder with the host OS
 if [ ! -d "/home/vagrant/tmwAthena/" ]; then
@@ -34,6 +18,7 @@ fi
 if [ -d "/home/vagrant/tmwAthena/tmwa" ]; then
   echo "Checking for updates for the themanaworld/tmwa clone..."
   cd /home/vagrant/tmwAthena/tmwa
+  git fetch --all
   echo "Switching to branch master to preserve local changes..."
   git checkout master &> /dev/null || echo "[Error] Failed to switch branches."
   TMWA_UPDT=$(git pull)
@@ -54,8 +39,8 @@ else
   echo "Cloning themanaworld/tmwa..."
   cd /home/vagrant/tmwAthena
   git clone --recursive git://github.com/themanaworld/tmwa.git &> /dev/null || echo "[Error] Cloning tmwa failed."
-  cd /home/vagrant/tmwAthena/tmwa/deps/attoconf
-  sudo ./setup.py install &> /dev/null
+  #cd /home/vagrant/tmwAthena/tmwa/deps/attoconf
+  #sudo ./setup.py install &> /dev/null
   cd /home/vagrant/tmwAthena/tmwa
   echo "Building tmwa (please be patient, this can take some time)..."
   ./configure &> /dev/null || echo "[Error] Configure failed for tmwa."
@@ -66,6 +51,7 @@ fi
 if [ -d "/home/vagrant/tmwAthena/tmwa-server-data" ]; then
   echo "Checking for updates for the themanaworld/tmwa-server-data clone..."
   cd /home/vagrant/tmwAthena/tmwa-server-data
+  git fetch --all
   echo "Switching to branch master to preserve local changes..."
   git checkout master &> /dev/null || echo "[Error] Failed to switch branches."
   TMWASD_UPDT=$(git pull)
@@ -74,10 +60,6 @@ if [ -d "/home/vagrant/tmwAthena/tmwa-server-data" ]; then
   else
     echo "Updating magic..."
     cd /home/vagrant/tmwAthena/tmwa-server-data/world/map/conf
-    curl https://gist.github.com/DinoPaskvan/6283572/raw/ae439049895f89925550127e9d22b80761cd2d6b/spells-build > spells-build &> /dev/null
-    chmod 777 spells-build
-    cp magic.conf.template magic.conf
-    ./build-magic.sh
     echo "themanaworld/tmwa-server-data clone updated."
   fi
 else
@@ -95,13 +77,6 @@ else
   git checkout master &> /dev/null
   cd music &> /dev/null
   git checkout master &> /dev/null
-  # Set up magic
-  echo "Setting up magic..."
-  cd /home/vagrant/tmwAthena/tmwa-server-data/world/map/conf
-  curl https://gist.github.com/DinoPaskvan/6283572/raw/ae439049895f89925550127e9d22b80761cd2d6b/spells-build > spells-build &> /dev/null
-  chmod 777 spells-build
-  cp magic.conf.template magic.conf
-  ./build-magic.sh
 fi
 
 # Run the tmwa server
