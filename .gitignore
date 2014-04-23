@@ -13,3 +13,4 @@ Thumbs.db
 tmwa/
 tmwa-server-data/
 .vagrant/
+tmw-vagrant*
