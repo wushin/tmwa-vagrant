@@ -21,20 +21,13 @@ if [ -d "/home/vagrant/tmwAthena/tmwa" ]; then
   git fetch --all
   echo "Switching to branch master to preserve local changes..."
   git checkout stable &> /dev/null || echo "[Error] Failed to switch branches."
-  TMWA_UPDT=$(git pull)
-  if [ "$TMWA_UPDT" == "Already up-to-date." ]; then
-    echo "themanaworld/tmwa clone is already up to date."
-    # Make install just in case the clone is from a previous VM
-    sudo make install &> /dev/null
-  else
-    echo "themanaworld/tmwa clone updated."
-    echo "Rebuilding tmwa (please be patient, this can take some time)..."
-    git submodule update --init &> /dev/null
-    make clean &> /dev/null
-    ./configure &> /dev/null
-    make &> /dev/null
-    sudo make install &> /dev/null
-  fi
+  git pull &> /dev/null || echo "[Error] Failed to pull repo"
+  echo "Rebuilding tmwa (please be patient, this can take some time)..."
+  # Always rebuild as new libs can break code
+  make clean &> /dev/null
+  ./configure &> /dev/null
+  make &> /dev/null
+  sudo make install &> /dev/null
 else
   echo "Cloning themanaworld/tmwa..."
   cd /home/vagrant/tmwAthena
