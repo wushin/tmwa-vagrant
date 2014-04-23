@@ -93,6 +93,7 @@ echo "Starting the server..."
 sleep 15
 
 # Output info about the server
+echo " "
 echo "##############################################################################"
 echo "#                                                                            #"
 echo "#   Server is now running. You can reach it by adding a new server to your   #"
