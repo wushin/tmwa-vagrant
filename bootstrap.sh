@@ -20,7 +20,7 @@ if [ -d "/home/vagrant/tmwAthena/tmwa" ]; then
   cd /home/vagrant/tmwAthena/tmwa
   git fetch --all
   echo "Switching to branch master to preserve local changes..."
-  git checkout master &> /dev/null || echo "[Error] Failed to switch branches."
+  git checkout stable &> /dev/null || echo "[Error] Failed to switch branches."
   TMWA_UPDT=$(git pull)
   if [ "$TMWA_UPDT" == "Already up-to-date." ]; then
     echo "themanaworld/tmwa clone is already up to date."
@@ -39,8 +39,6 @@ else
   echo "Cloning themanaworld/tmwa..."
   cd /home/vagrant/tmwAthena
   git clone --recursive git://github.com/themanaworld/tmwa.git &> /dev/null || echo "[Error] Cloning tmwa failed."
-  #cd /home/vagrant/tmwAthena/tmwa/deps/attoconf
-  #sudo ./setup.py install &> /dev/null
   cd /home/vagrant/tmwAthena/tmwa
   echo "Building tmwa (please be patient, this can take some time)..."
   ./configure &> /dev/null || echo "[Error] Configure failed for tmwa."
@@ -79,12 +77,6 @@ else
   git checkout master &> /dev/null
 fi
 
-# Run the tmwa server
-cd /home/vagrant/tmwAthena/tmwa-server-data/
-echo "Starting the server..."
-./run-all &
-sleep 15
-
 # Check for admin account and create it if it doesn't exist
 cd /home/vagrant/tmwAthena/tmwa-server-data/login/save
 CHK_ACC=$(cat account.txt | grep admin)
@@ -100,6 +92,12 @@ END
 else
   echo "GM account is already set up."
 fi
+
+# Run the tmwa server
+cd /home/vagrant/tmwAthena/tmwa-server-data/
+echo "Starting the server..."
+./run-all &
+sleep 15
 
 # Output info about the server
 echo "##############################################################################"
