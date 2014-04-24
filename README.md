@@ -29,6 +29,10 @@ To destroy the machine completely (you'll still keep the Vagrantfile and any cha
 
 **Important:** Since version 1.3, Vagrant only provisions the machine on first run. But we want the machine to be updated automatically every time we run it, so, to start the machine, use `vagrant up --provision`.
 
+##Development of base image
+`vagrant init wushin/tmw-vagrant` will pull just the image used to make the vmimage. That is hosted here.
+[Vagrant Cloud](https://vagrantcloud.com/wushin/tmw-vagrant)
+
 ##To do
 * Fix the output of the provisioning script (formatting, more information)
 * General improvments to the script

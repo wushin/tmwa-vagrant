@@ -10,14 +10,13 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # please see the online documentation at vagrantup.com.
 
   # Every Vagrant virtual environment requires a box to build off of.
-  config.vm.box = "tmw-vagrant"
-
-  # The url from where the 'config.vm.box' box will be fetched if it
-  # doesn't already exist on the user's system.
-  config.vm.box_url = "http://www.tentwentythree.org/tmw-vagrant.box"
+  config.vm.box = "wushin/tmw-vagrant"
+  config.vm.box_check_update = "true"
+  config.vm.box_download_checksum = "0dac9be02a02414980025caef9125724292bb568"
+  config.vm.box_download_checksum_type = "sha1"
 
   # Set up a hostname for the machine
-  config.vm.hostname = "tmw-dev"
+  config.vm.hostname = "tmw-vagrant"
 
   # Forward ports for the character, map and login server
   config.vm.network :forwarded_port, guest: 6122, host: 6122
