@@ -14,3 +14,7 @@ tmwa/
 tmwa-server-data/
 .vagrant/
 tmw-vagrant*
+tmwa-vagrant*
+tmwa-*.log
+vagrant
+*.pid

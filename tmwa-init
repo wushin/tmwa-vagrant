@@ -1,0 +1,326 @@
+#!/bin/bash
+### BEGIN INIT INFO
+# Provides:          tmwa,tmwa-server-data,tmwa-client-data
+# Required-Start:    $remote_fs
+# Required-Stop:     $remote_fs
+# Default-Start:     2 3 4 5 
+# Default-Stop:      0 1 6
+# Short-Description: TMW source installer
+# Description:       TMW is an Open Source MMORPG. This script
+#                    pulls directly from the repos and builds 
+#                    the most recent stable version of the server
+### END INIT INFO
+# What is this?
+DESC="TMW source installer"
+# Set base options
+HASAPT=$(apt-get -v)
+TMW_HOME="/home/tmwa"
+AUTO_UPDATE=yes
+BUILD_LOG="$TMW_HOME/tmwa-build.log"
+DATA_LOG="$TMW_HOME/tmwa-git-log.log"
+SERVER_LOG="$TMW_HOME/tmwa-server.log"
+DEB_DEPS="g++ flex bison python make realpath git"
+REDHAT_DEPS="gcc-c++ flex bison make git"
+
+if [ -d /vagrant ]
+then
+    ln -fs /vagrant/ $TMW_HOME &> /dev/null
+fi
+
+# Read config
+if [ -e /etc/default/tmwa ]
+then
+    . /etc/default/tmwa
+fi
+
+# Init Script globals
+TMWALOGIN=$(which tmwa-login)
+TMWACHAR=$(which tmwa-char)
+TMWAMAP=$(which tmwa-map)
+TMWALOGINPID="/tmp/tmwa-login.pid"
+TMWACHARPID="/tmp/tmwa-char.pid"
+TMWAMAPPID="/tmp/tmwa-map.pid"
+ERROR=0
+
+# Check Install
+check_install()
+{
+    if [ ! -d "$TMW_HOME" ]
+    then
+        mkdir -p $TMW_HOME &> /dev/null || echo "Check Permissions. I require Sudo or root"
+    fi
+    echo "Checking Dependancies"
+    if [ "$HASAPT" == "" ]
+    then
+        sudo yum -y install $REDHAT_DEPS &> /dev/null
+    else
+        sudo apt-get -y install $DEB_DEPS &> /dev/null
+    fi
+    if [ "$AUTO_UPDATE" == yes ]
+    then
+        echo "Updating the Virtual Machine packages"
+        if [ "$HASAPT" = "" ]
+        then
+            sudo yum -y update &> /dev/null
+        else
+            sudo apt-get -y update &> /dev/null
+            sudo apt-get -y dist-upgrade &> /dev/null
+        fi
+    fi
+    
+    if [ ! -d "$TMW_HOME/tmwa" ]
+    then
+        echo "Downloading TMWA server sources"
+        mkdir -p $TMW_HOME/tmwa
+        git clone --recursive git://github.com/themanaworld/tmwa.git $TMW_HOME/tmwa &> /dev/null || ERROR=1000;
+    fi 
+    check_error
+}
+check_data() {
+    if [ ! -d "$TMW_HOME/tmwa-server-data" ]
+    then
+        echo "Downloading TMWA game server, client, & music data"
+        mkdir -p $TMW_HOME/tmwa-server-data
+        git clone --recursive git://github.com/themanaworld/tmwa-server-data.git $TMW_HOME/tmwa-server-data &> /dev/null || ERROR=1001;
+        ln -s $TMW_HOME/tmwa-server-data/git/hooks/post-merge $TMW_HOME/tmwa-server-data/.git/hooks/ &> /dev/null || ERROR=1001;
+        ln -s $TMW_HOME/tmwa-server-data/git/hooks/post-merge $TMW_HOME/tmwa-server-data/.git/modules/client-data/hooks/ &> /dev/null || ERROR=1001;
+    fi
+    check_error
+}
+build()
+{
+    check_install
+    cd $TMW_HOME/tmwa/
+    TIME=`date`
+    make -C $TMW_HOME/tmwa/ clean &> /dev/null
+    echo "Rebuilding tmwa (please be patient, this can take some time)..."
+
+    echo "################# $TIME NEW BUILD START ###################" >> $BUILD_LOG
+    echo "Build Log available at $BUILD_LOG"
+    $TMW_HOME/tmwa/configure &>> $BUILD_LOG
+    make -C $TMW_HOME/tmwa/ &>> $BUILD_LOG
+    sudo make -C $TMW_HOME/tmwa/ install &>> $BUILD_LOG || ERROR=1002;
+    check_error
+}
+update_server()
+{
+    check_install
+    # Update TMWA Server
+    echo "################# $TIME TMWA Update ###################" >> $DATA_LOG
+    cd $TMW_HOME/tmwa &> /dev/null
+    git fetch --all &>> $DATA_LOG
+    git checkout stable &>> $DATA_LOG
+    git pull &>> $DATA_LOG || ERROR=1004;
+}
+update_data()
+{
+    check_data
+    # Update Server data
+    echo "################# $TIME Server Data Update ###################" >> $DATA_LOG
+    echo "Checking for updates for the themanaworld/tmwa-server-data clone..."
+    cd $TMW_HOME/tmwa-server-data &> /dev/null
+    git fetch --all &>> $DATA_LOG
+    git checkout master &>> $DATA_LOG
+    git pull &>> $DATA_LOG || ERROR=1005;
+
+    # We make conf each time as settings may have changed
+    make -C $TMW_HOME/tmwa-server-data conf &>> $DATA_LOG
+
+    # Checkout master branches inside client-data
+    cd client-data &> /dev/null
+    git checkout master &>> $DATA_LOG
+    cd music &> /dev/null
+    git checkout master &>> $DATA_LOG
+}
+admin_reset()
+{
+    # Check for admin account and create it if it doesn't exist
+    CHK_ACC=$(grep admin $TMW_HOME/tmwa-server-data/login/save/account.txt | awk '{print $2}')
+    case "$CHK_ACC" in
+        admin)
+        echo "Reseting GM Account Password"
+        cd $TMW_HOME/tmwa-server-data/login &> /dev/null
+        tmwa-admin <<END
+password admin vagrant
+exit
+exit
+END
+        ;;
+        *)
+        echo "Creating GM Account"
+        cd $TMW_HOME/tmwa-server-data/login &> /dev/null
+        tmwa-admin <<END
+add admin M vagrant
+gm admin 99
+exit
+exit
+END
+        ;;
+    esac
+    CHK_ACC=$(grep admin $TMW_HOME/tmwa-server-data/login/save/account.txt | awk '{print $2}')
+    if [ "$CHK_ACC" == "admin" ]
+    then
+        echo "########################"
+        echo "#  Admin Account Info  #"
+        echo "########################"
+        echo "#   Username: admin    #"
+        echo "#  Password: vagrant   #"
+        echo "########################"
+    else
+        ERROR=1003
+    fi
+}
+start()
+{
+    echo "Starting the servers..."
+    if [ $TMWALOGIN ] 
+    then
+        start-stop-daemon --start --oknodo --quiet -d $TMW_HOME/tmwa-server-data/login -b --exec $TMWALOGIN || ERROR=5000;
+    fi
+    if [ $TMWACHAR ]
+    then
+        start-stop-daemon --start --oknodo --quiet -d $TMW_HOME/tmwa-server-data/world -b --exec $TMWACHAR || ERROR=5000;
+    fi
+    if [ $TMWAMAP ]
+    then
+        start-stop-daemon --start --oknodo --quiet -d $TMW_HOME/tmwa-server-data/world/map -b --exec $TMWAMAP || ERROR=5000;
+    fi
+    check_error
+    echo "###########################"
+    echo "# Server Connection Info: #"
+    echo "###########################"
+    echo "# Name: Local Server      #"
+    echo "# Address: localhost      #"
+    echo "# Port: 6901              #"
+    echo "# Server type: TmwAthena  #"
+    echo "###########################"
+}
+status()
+{
+    if  ! pidof $TMWALOGIN >/dev/null
+    then
+        ERROR=5000
+    fi
+    if  ! pidof $TMWACHAR >/dev/null
+    then
+        ERROR=5000
+    fi
+    if  ! pidof $TMWAMAP >/dev/null
+    then
+        ERROR=5000
+    fi
+    check_error
+    echo "All Servers up"
+}
+stop()
+{
+    echo "Trying to Stop TMW servers"
+    if [ $TMWALOGIN ]
+    then
+        start-stop-daemon --stop --oknodo --quiet --exec $TMWALOGIN || ERROR=5001;
+    fi
+    if [ $TMWACHAR ]
+    then
+        start-stop-daemon --stop --oknodo --quiet --exec $TMWACHAR || ERROR=5001;
+    fi
+    if [ $TMWAMAP ]
+    then
+        start-stop-daemon --stop --oknodo --quiet --exec $TMWAMAP || ERROR=5001;
+    fi
+    check_error
+}
+check_error()
+{
+    case "$ERROR" in
+        1000)
+            echo "Failed to download TMWA Sources"
+            exit 2
+            ;;
+        1001)
+            echo "Failed to download TMWA Server Data Sources"
+            exit 2
+            ;;
+        1002)
+            echo "Failed to build TMWA"
+            exit 2
+            ;;
+        1003)
+            echo "Failed to create Admin Account"
+            echo "Make sure TMWA is running"
+            exit 2
+            ;;
+        1004)
+            echo "Merge Conflict in TMWA"
+            exit 2
+            ;;
+        1005)
+            echo "Merge Conflict in Server, Client or Music Data"
+            exit 2
+            ;;
+        5000)
+            echo "Server is dead jim."
+            exit 2
+            ;;
+        5001)
+            echo "Server will not stop."
+            exit 2
+            ;;
+        5002)
+            echo "Server can't start."
+            exit 2
+            ;;
+        0)
+            return 0
+            ;;
+    esac
+}
+
+case "$1" in
+start)
+    start
+    ;;
+stop)
+    stop
+    ;;
+build)
+    stop
+    build
+    start
+    ;;
+update)
+    stop
+    update_server
+    update_data
+    start
+    ;;
+update_server)
+    stop
+    update_server
+    start
+    ;;
+update_data)
+    update_data
+    ;;
+restart)
+    stop && start
+    ;;
+admin_reset)
+    status 
+    admin_reset
+    ;;
+install)
+    stop
+    update_server
+    update_data
+    build
+    start
+    admin_reset
+    sudo update-rc.d tmwa-init defaults
+    ;;
+status)
+    status
+    ;;
+*)
+    echo "Usage: $0 {start|stop|restart|build|update|update_server|update_data|admin_reset|install|status}"
+    exit 1
+esac

@@ -22,6 +22,14 @@ Whenever you run `vagrant up`, the VM updates the local repositories (it does a 
 
 ##Usage
 To get shell access to the machine, run `vagrant ssh`.
+Once at the shell vagrant can issue a number of commands to `/etc/init.d/tmwa-init` `{start|stop|restart|build|update|update_server|update_data|admin_reset|install|status}`
+`start|stop|restart|status` All deal with the servers tmwa-{char|login|map}
+`build` will build what ever you have checked out in tmwa/
+`update` will update both TMWA and TMWA-data to current master repos
+`update_server` updates TMWA to current master repo
+`update_data` updates TMWA-data to current master repo
+`admin_reset` will reset the admin password to vagrant
+`install` will update and reinstall everything
 
 Use `vagrant suspend` to pause the machine. The contents of the VM's ram will be written to your hard drive and it won't be using and CPU or RAM while it's paused. To run it again from its paused state, use `vagrant resume`. To turn the machine off, use `vagrant halt`. To run it again, use `vagrant up`.
 

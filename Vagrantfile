@@ -12,7 +12,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # Every Vagrant virtual environment requires a box to build off of.
   config.vm.box = "wushin/tmw-vagrant"
   config.vm.box_check_update = "true"
-  config.vm.box_download_checksum = "0dac9be02a02414980025caef9125724292bb568"
+  config.vm.box_download_checksum = "e9e6ada5d367c6048f1da0bdb503c9952d6797c7"
   config.vm.box_download_checksum_type = "sha1"
 
   # Set up a hostname for the machine
@@ -26,7 +26,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # Provision the VM
   $script = <<SCRIPT
 chmod u+x /vagrant/bootstrap.sh
-su vagrant -c /vagrant/bootstrap.sh
+su vagrant -c /vagrant/bootrap.sh
 SCRIPT
-  config.vm.provision :shell, :path => "bootstrap.sh"
+  config.vm.provision :shell, :path => "./bootstrap.sh"
 end
