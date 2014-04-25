@@ -12,7 +12,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # Every Vagrant virtual environment requires a box to build off of.
   config.vm.box = "wushin/tmw-vagrant"
   config.vm.box_check_update = "true"
-  config.vm.box_download_checksum = "e9e6ada5d367c6048f1da0bdb503c9952d6797c7"
+  config.vm.box_download_checksum = "0b5271ba5d4e02227f36726886245996eb48ece2"
   config.vm.box_download_checksum_type = "sha1"
 
   # Set up a hostname for the machine
