@@ -10,6 +10,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # please see the online documentation at vagrantup.com.
 
   # Every Vagrant virtual environment requires a box to build off of.
+  Vagrant.require_version ">= 1.5.0"
   config.vm.box = "wushin/tmw-vagrant"
   config.vm.box_check_update = "true"
   config.vm.box_download_checksum = "0b5271ba5d4e02227f36726886245996eb48ece2"
