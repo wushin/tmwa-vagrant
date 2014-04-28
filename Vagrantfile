@@ -12,7 +12,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # Every Vagrant virtual environment requires a box to build off of.
   Vagrant.require_version ">= 1.4.0"
   config.vm.box = "wushin/tmw-vagrant"
-  config.vm.box_url = "https://vagrantcloud.com/wushin/tmw-vagrant"
+  config.vm.box_url = "http://54.186.154.168/tmw-vagrant.box"
   config.vm.box_check_update = "true"
   config.vm.box_download_checksum = "0b5271ba5d4e02227f36726886245996eb48ece2"
   config.vm.box_download_checksum_type = "sha1"
