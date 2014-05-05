@@ -71,7 +71,6 @@ check_install()
     if [ ! -d "$TMW_HOME/tmwa" ]
     then
         echo "Downloading TMWA server sources"
-        mkdir -p $TMW_HOME/tmwa
         git clone --recursive git://github.com/themanaworld/tmwa.git $TMW_HOME/tmwa &> /dev/null || ERROR=1000;
     fi 
     check_error
